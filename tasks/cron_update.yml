@@ -1,0 +1,19 @@
+- name: Copy autoupdate script
+  copy:
+    src: updater.sh
+    dest: /usr/bin/debian_autoupdate.sh
+    owner: root
+    group: root
+    mode: '0744'
+  tags:
+    - security
+
+- name: Update system once every day
+  cron:
+    hour: "2"
+    name: Update system once every day"
+    cron_file: "debian_autoupdate"
+    user: "root"
+    job: "/usr/bin/debian_autoupdate.sh"
+  tags:
+    - security

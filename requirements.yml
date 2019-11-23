@@ -1,0 +1,7 @@
+- src: weareinteractive.sudo
+- src: dev-sec.os-hardening
+- src: dev-sec.ssh-hardening
+- src: oefenweb.fail2ban
+- src: git+https://github.com/icyd/rkhunter-ansible-role.git
+- src: robertdebock.logwatch
+- src: maxlareo.portsentry
