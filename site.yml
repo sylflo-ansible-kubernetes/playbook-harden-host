@@ -2,41 +2,16 @@
 - hosts: "{{ hostlist }}"
   become: yes
   become_user: root
-  post_tasks:
-    - name: Add the user '{{ username }}', appending the group 'sudo'
-      user:
-        name: "{{ username }}"
-        password: "{{ '{{ password }}' | password_hash('sha512') }}"
-        shell: /bin/bash
-        groups: sudo
-        append: yes
+  vars:
+    ansible_ssh_user: "{{ username }}"
+    ansible_ssh_pass: "{{ password }}"
 
   roles:
-    - role: weareinteractive.sudo
-      vars:
-        sudo_defaults:
-          - defaults: env_reset
-          - defaults: secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-          - name: '{{ username }}'
-            defaults: 'requiretty'
-          - name: '%group1'
-            defaults: '!requiretty'
-        sudo_users:
-          - name: '{{ username }}'
-            users: '{{ username }}'
-        purge_other_sudoers_files: yes
-
     - role: dev-sec.os-hardening
       vars:
         sysctl_overwrite:
           # Enable IPv4 traffic forwarding.
           net.ipv4.ip_forward: 1
-
-    - role: dev-sec.ssh-hardening
-      vars:
-        ssh_permit_root_login: yes
-        ssh_client_password_login: yes
-        ssh_server_password_login: yes
 
     - role: oefenweb.fail2ban
       vars:
@@ -44,18 +19,23 @@
         fail2ban_bantime: -1
         fail2ban_services:
           - name: sshd
+      when: install_fail2ban
 
     - role: rkhunter-ansible-role
       vars:
         rkhunter_report_mail_address: "{{ email }}"
         rkhunter_diag_scan: yes
         rkhunter_allow_ssh_root_login: yes
+      when: install_rkhunter
 
     - role: robertdebock.logwatch
       vars:
         logwatch_mailto: "{{ email }}"
+      when: install_logwatch
 
     - role: maxlareo.portsentry
+      when: install_portsentry
 
   tasks:
     - include: tasks/cron_update.yml
+      when: install_automatic_update

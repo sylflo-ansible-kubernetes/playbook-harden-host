@@ -5,8 +5,6 @@
     owner: root
     group: root
     mode: '0744'
-  tags:
-    - security
 
 - name: Update system once every day
   cron:
@@ -15,5 +13,3 @@
     cron_file: "debian_autoupdate"
     user: "root"
     job: "/usr/bin/debian_autoupdate.sh"
-  tags:
-    - security
