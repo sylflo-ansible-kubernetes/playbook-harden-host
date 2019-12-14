@@ -39,3 +39,16 @@
   tasks:
     - include: tasks/cron_update.yml
       when: install_automatic_update
+
+    - name: "Create ssh key"
+      become: no
+      become_user: "{{ local_username }}"
+      local_action:
+        module: openssh_keypair
+        path: "{{ path_ssh_key }}"
+
+    - name: Set authorized key taken from file
+      authorized_key:
+        user: debian
+        state: present
+        key: "{{ lookup('file', '{{ path_ssh_key }}.pub') }}"

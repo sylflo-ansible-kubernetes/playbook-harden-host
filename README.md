@@ -32,6 +32,8 @@ Create a file `site.yml` with the variables
   import_playbook: hardening/site.yml
   vars:
     hostlist: all
+    local_username: usernameOfLocalUserWhereTheSSHKeyWillBeCreated
+    path_ssh_key: /homeLocalUser/.ssh/serve_rsa
     username: debian
     password: yourPassword
     email: yourEmail@gmail.com
